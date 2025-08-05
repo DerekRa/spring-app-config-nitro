@@ -1,0 +1,30 @@
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: ${EUREKA_SERVER_ADDRESS:http://localhost:8761/eureka}
+
+spring:
+  zipkin:
+    # baseUrl: http://zipkin-svc:9411 # docker desktop
+    baseUrl: ${CONFIG_SERVER_URL:http://localhost:9411} # local machine
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      # endpoint: http://host.docker.internal:9411/api/v2/spans # docker desktop
+      endpoint: ${CONFIG_SERVER_URL:http://localhost:9411/api/v2/spans} # local machine
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
